@@ -1,35 +1,92 @@
 import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
 import './App.css'
 
+interface Todo {
+  id: number;
+  text: string;
+  completed: boolean;
+}
+
 function App() {
-  const [count, setCount] = useState(0)
+  const [todos, setTodos] = useState<Todo[]>([]);
+  const [input, setInput] = useState<string>('');
+  const [editingID, setEditingId] = useState<number | null>(null);
+  const [editText, setEditText] = useState<string>('');
+ 
+  const addTodo = () => {
+    if (input.trim() !=='') {
+      setTodos([...todos, { id: Date.now(), text: input, completed: false }]);
+      setInput('');
+    }
+  };
+  const toggleTodo = (id: number) => {
+    setTodos(todos.map(todo =>
+      todo.id === id ? { ...todo, completed: !todo.completed } : todo 
+    ));
+  };
+
+  const deleteTodo = (id: number) => {
+    setTodos(todos.filter(todo => todo.id !== id));
+  };
+
+  const startEditing = (id: number, text:string) => {
+    setEditingId(id);
+    setEditText(text);
+  };
+
+  const updateTodo = (id: number) => {
+    setTodos (todos.map(todo =>
+      todo.id === id ? { ...todo, text:editText } : todo
+    ));
+    setEditingId(null);
+    setEditText('');
+  };
 
   return (
-    <>
+    <div className="App">
+      <h1>Todo リスト</h1>
       <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+        <input
+         value={input}
+         onChange={(e) => setInput(e.target.value)}
+         placeholder="新しいTodoを入力"
+        />
+        <button onClick={addTodo}>追加</button>
+        </div>
+        <ul>
+          {todos.map((todo: Todo) => (
+            <li key={todo.id}>
+              {editingID === todo.id ? (
+                <div>
+                  <input
+                  value={editText}
+                  onChange={(e) => setEditText(e.target.value)}
+                  />
+                  <button onClick={() => updateTodo(todo.id)}>完了</button>
+                  <button onClick={() => setEditingId(null)}>キャンセル</button>
+                </div>
+              ) : (
+                <>
+              <span
+              style={{
+                textDecoration: todo.completed ? 'line-through' : 'none',
+                fontSize: '18px',
+                padding: '10px',
+                cursor: 'pointer'
+              }}
+              onClick={() => toggleTodo(todo.id)}
+              >
+                {todo.text}
+              </span>
+              <button onClick={() => startEditing(todo.id, todo.text)}>編集</button>
+              <button onClick={() => deleteTodo(todo.id)}>削除</button>
+            </>
+           )}
+            </li>
+          ))}
+        </ul>
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+  );
 }
 
 export default App
