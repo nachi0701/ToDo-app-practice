@@ -10,7 +10,7 @@ interface Todo {
 function App() {
   const [todos, setTodos] = useState<Todo[]>([]);
   const [input, setInput] = useState<string>('');
-  const [editingID, setEditingId] = useState<number | null>(null);
+  const [editingId, setEditingId] = useState<number | null>(null);
   const [editText, setEditText] = useState<string>('');
  
   const addTodo = () => {
@@ -35,7 +35,7 @@ function App() {
   };
 
   const updateTodo = (id: number) => {
-    setTodos (todos.map(todo =>
+    setTodos(todos.map(todo =>
       todo.id === id ? { ...todo, text:editText } : todo
     ));
     setEditingId(null);
@@ -56,7 +56,7 @@ function App() {
         <ul>
           {todos.map((todo: Todo) => (
             <li key={todo.id}>
-              {editingID === todo.id ? (
+              {editingId === todo.id ? (
                 <div>
                   <input
                   value={editText}
