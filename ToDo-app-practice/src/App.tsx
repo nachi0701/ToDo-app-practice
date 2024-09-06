@@ -5,6 +5,7 @@ interface Todo {
   id: number;
   text: string;
   completed: boolean;
+  dateAdded: Date;
 }
 
 function App() {
@@ -15,7 +16,12 @@ function App() {
  
   const addTodo = () => {
     if (input.trim() !=='') {
-      setTodos([...todos, { id: Date.now(), text: input, completed: false }]);
+      setTodos([...todos, {
+        id: Date.now(),
+        text: input,
+        completed: false,
+        dateAdded: new Date()
+      }]);
       setInput('');
     }
   };
@@ -77,6 +83,9 @@ function App() {
               onClick={() => toggleTodo(todo.id)}
               >
                 {todo.text}
+              </span>
+              <span style={{ marginLeft: '10px', fontStyle: 'italic', fontSize: '14px'}}>
+                {todo.dateAdded.toLocaleDateString()}{/* Display the date */}
               </span>
               <button onClick={() => startEditing(todo.id, todo.text)}>編集</button>
               <button onClick={() => deleteTodo(todo.id)}>削除</button>
