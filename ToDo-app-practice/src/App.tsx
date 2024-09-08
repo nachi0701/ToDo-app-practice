@@ -1,11 +1,12 @@
 import { useState } from 'react'
-import './App.css'
+import './App.css';
 
 interface Todo {
   id: number;
   text: string;
   completed: boolean;
   dateAdded: Date;
+  deadline?: string;
 }
 
 function App() {
@@ -13,6 +14,7 @@ function App() {
   const [input, setInput] = useState<string>('');
   const [editingId, setEditingId] = useState<number | null>(null);
   const [editText, setEditText] = useState<string>('');
+  const [deadline, setDeadline] = useState<string>('');
  
   const addTodo = () => {
     if (input.trim() !=='') {
@@ -20,9 +22,11 @@ function App() {
         id: Date.now(),
         text: input,
         completed: false,
-        dateAdded: new Date()
+        dateAdded: new Date(),
+        deadline: deadline || undefined,
       }]);
       setInput('');
+      setDeadline('');
     }
   };
   const toggleTodo = (id: number) => {
@@ -42,7 +46,7 @@ function App() {
 
   const updateTodo = (id: number) => {
     setTodos(todos.map(todo =>
-      todo.id === id ? { ...todo, text:editText } : todo
+      todo.id === id ? { ...todo, text: editText } : todo
     ));
     setEditingId(null);
     setEditText('');
@@ -57,6 +61,11 @@ function App() {
          onChange={(e) => setInput(e.target.value)}
          placeholder="新しいTodoを入力"
         />
+        <input
+          type="date"
+          value={deadline}
+          onChange={(e) => setDeadline(e.target.value)}
+          />
         <button onClick={addTodo}>追加</button>
         </div>
         <ul>
@@ -87,6 +96,10 @@ function App() {
               <span style={{ marginLeft: '10px', fontStyle: 'italic', fontSize: '14px'}}>
                 {todo.dateAdded.toLocaleDateString()}{/* Display the date */}
               </span>
+              {todo.deadline && (
+                <span style={{ marginLeft: '10px', fontSize: '14px', color: 'red'}}>
+                </span>
+              )}
               <button onClick={() => startEditing(todo.id, todo.text)}>編集</button>
               <button onClick={() => deleteTodo(todo.id)}>削除</button>
             </>
