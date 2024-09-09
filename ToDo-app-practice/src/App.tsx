@@ -15,6 +15,7 @@ function App() {
   const [editingId, setEditingId] = useState<number | null>(null);
   const [editText, setEditText] = useState<string>('');
   const [deadline, setDeadline] = useState<string>('');
+  const [editDeadline, setEditDeadline] = useState<string>('');
  
   const addTodo = () => {
     if (input.trim() !=='') {
@@ -46,10 +47,11 @@ function App() {
 
   const updateTodo = (id: number) => {
     setTodos(todos.map(todo =>
-      todo.id === id ? { ...todo, text: editText } : todo
+      todo.id === id ? { ...todo, text: editText, deadline: editDeadline || todo.deadline } : todo
     ));
     setEditingId(null);
     setEditText('');
+    setEditDeadline('');
   };
 
   return (
@@ -77,6 +79,11 @@ function App() {
                   value={editText}
                   onChange={(e) => setEditText(e.target.value)}
                   />
+                  <input
+                    type="date"
+                    value={editDeadline}
+                    onChange={(e) => setEditDeadline(e.target.value)}
+                  />
                   <button onClick={() => updateTodo(todo.id)}>完了</button>
                   <button onClick={() => setEditingId(null)}>キャンセル</button>
                 </div>
@@ -98,16 +105,17 @@ function App() {
               </span>
               {todo.deadline && (
                 <span style={{ marginLeft: '10px', fontSize: '14px', color: 'red'}}>
+                  {todo.deadline}
                 </span>
               )}
               <button onClick={() => startEditing(todo.id, todo.text)}>編集</button>
               <button onClick={() => deleteTodo(todo.id)}>削除</button>
             </>
            )}
-            </li>
-          ))}
-        </ul>
-      </div>
+          </li>
+        ))}
+      </ul>
+    </div>
   );
 }
 
